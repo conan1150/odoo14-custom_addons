@@ -1,0 +1,39 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="containers_views">
+      <field name="name">Containers list</field>
+      <field name="model">transportation.container</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="containers_form">
+      <field name="name">Containers form</field>
+      <field name="model">transportation.container</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <group>
+              <field name="name"/>
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="container_action_window">
+      <field name="name">Container List</field>
+      <field name="res_model">transportation.container</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Container List" id="transportation.menu_container_list" parent="transportation.container"
+              action="container_action_window"/>
+
+  </data>
+</odoo>

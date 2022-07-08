@@ -1,0 +1,45 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="configurations_state_views">
+      <field name="name">State</field>
+      <field name="model">transportation.states</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="active"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="configurations_state_form">
+      <field name="name">State form</field>
+      <field name="model">transportation.states</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <group>
+              <field name="name"/>
+              <field name="active"/>
+            </group>
+            <group>
+              <field name="create_button" string="Button"/>
+<!--              <field name="active"/>-->
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="configurations_state_act_window">
+      <field name="name">State</field>
+      <field name="res_model">transportation.states</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="State" id="transportation.configurations_state_list" parent="transportation.configuration"
+              action="configurations_state_act_window"/>
+
+  </data>
+</odoo>

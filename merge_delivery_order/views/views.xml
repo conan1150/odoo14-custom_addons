@@ -1,0 +1,14 @@
+<odoo>
+  <data>
+    <!-- <record id="open_merge_delivery_order_wizard" model="ir.ui.view">
+      <field name="name">open.merge.delivery.order.wizard</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//header//button[@name='do_unreserve']" position="after">
+          <button name="open_wiz_merge" string="Merge Delivery Order" type="object" />
+        </xpath>
+      </field>
+    </record> -->
+  </data>
+</odoo>

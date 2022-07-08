@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="stock_merge_delivery_order" model="ir.ui.view">
+            <field name="name">stock.merge.delivery.order</field>
+            <field name="model">stock.merge.delivery.order.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="partner_ids" widget="many2many_tags" readonly="1">
+                                <tree>
+                                    <field name="display_name" />
+                                </tree>
+                            </field>  
+                        </group>
+                        <group>
+                            <field name="order_ids" widget="many2many_tags" readonly="1">
+                                <tree>
+                                    <field name="name" />
+                                </tree>
+                            </field>  
+                        </group>                                            
+                    </group>
+                    <group>                     
+                        <field name="product_ids" readonly="1">
+                            <tree>
+                                <field name="product_id" />
+                                <field name="location_id" />
+                                <field name="product_uom_qty" />
+                                <field name="product_uom_id" />
+                            </tree>
+                        </field>
+
+                    </group>
+                    <footer>
+                        <button string="Print" type="object" name="action_report_merge_order" />
+                        <button string="Cancel" special="cancel" />
+                    </footer>                  
+                </form>
+            </field>
+        </record> 
+
+        <record id="stock_merge_delivery_action" model="ir.actions.act_window">
+            <field name="name">Merge Delivery Order</field>
+            <field name="res_model">stock.merge.delivery.order.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>  
+
+        <record id="stock_merge_delivery_open_wizard" model="ir.actions.act_window">
+            <field name="name">Picking Operations (Marge)</field>
+            <field name="res_model">stock.merge.delivery.order.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="merge_delivery_order.stock_merge_delivery_order" />
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_stock_picking" />
+            <field name="binding_view_types">list</field>
+        </record>
+
+    </data>
+</odoo>
+

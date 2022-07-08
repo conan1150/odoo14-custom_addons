@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<odoo>       
+      <data>           
+            <template id="assets_backend" name="tree view menu" inherit_id="web.assets_backend">               
+                  <xpath expr="." position="inside">                   
+                        <script type="text/javascript" src="/import_purchase_sale_order/static/src/js/pu_import_btn.js"></script>               
+                  </xpath>           
+            </template>       
+      </data>   
+</odoo>
+
+
+
+<!-- Example -->
+<!-- <odoo>
+    <record id="purchase_order_import_btn" model="ir.ui.view">
+        <field name="name">purchase.order.import.btn</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_rfq_send']" position="before">
+                <button name="import_purchase_sale_order.purchase_order_import_action" string="Import Purchase Order" type="action" class="btn-primary" />                
+            </xpath>
+        </field>
+    </record>    
+</odoo> -->

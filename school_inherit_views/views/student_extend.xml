@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data>
+  <!-- inheritance view -->
+    <record id="student_list_view_extend" model="ir.ui.view">
+      <field name="name">student.list.view.extend</field>
+      <field name="model">school.student</field>
+      <field name="inherit_id" ref="school_student.list" />
+      <field name="arch" type="xml">
+        <field name="id" position="after">
+          <field name="write_date" />
+        </field>
+      </field>
+    </record>
+
+  <!-- inheritance from -->
+    <record id="student_list_from_extend" model="ir.ui.view">
+      <field name="name">student.list.from.extend</field>
+      <field name="model">school.student</field>
+      <field name="inherit_id" ref="school_student.student_form_view" />
+      <field name="arch" type="xml">
+        <field name="create_uid" position="after">
+          <field name="write_date" />
+          <field name="write_uid" />
+        </field>
+        <!-- <field name="create_uid" position="before">
+          <field name="write_date" />
+        </field> -->
+      </field>
+    </record>
+
+    <!-- Inherit form view with xpart -->
+    <record id="student_form_inherit_view" model="ir.ui.view">
+      <field name="name">student.form.inherit.view</field>
+      <field name="model">school.student</field>
+      <field name="inherit_id" ref="school_student.student_form_view" />
+      <field name="arch" type="xml">
+        <xpath expr="//form//sheet" position="inside">
+          <group>
+            <field name="write_uid" />
+            <field name="write_date" />
+          </group>          
+        </xpath>
+      </field>
+    </record>
+
+    <record id="student_form_inherit_position_inside" model="ir.ui.view">
+      <field name="name">student.form.inherit.position.inside</field>
+      <field name="model">school.student</field>
+      <field name="inherit_id" ref="school_student.student_form_view" />
+      <field name="arch" type="xml">
+        <xpath expr="//notebook" position="inside">
+         <page string="Extend Position Inside Option">
+            <h1>Inside potion</h1>
+         </page>          
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

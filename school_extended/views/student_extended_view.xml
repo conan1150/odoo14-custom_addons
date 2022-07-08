@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="student_extended_view">
+            <field name="name">Student Extended View</field>
+            <field name="model">school.student</field>
+            <field name="inherit_id" ref="school_student.list" />
+            <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="student_full_name" string="Full Name" />
+            </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="student_extended_form">
+            <field name="name">Student Extended Form</field>
+            <field name="model">school.student</field>
+            <field name="inherit_id" ref="school_student.student_form_view" />
+            <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="student_full_name" string="Full Name" />
+            </field>
+            </field>
+        </record>
+    </data>
+</odoo>

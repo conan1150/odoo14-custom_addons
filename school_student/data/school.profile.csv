@@ -1,0 +1,7 @@
+id,name,school_number,email,phone
+school_1,"SchoolOneFormCSV","SC001"
+school_2,"SchoolTwoFormCSV","SC002"
+school_3,"SchoolThreeFormCSV","SC003"
+school_4,"SchoolFourFormCSV","SC004"
+school_5,"SchoolFiveFormCSV","SC005"
+school_6,"SchoolSixFormCSV","SC006","school_six@odoo.com","022 222 2000"

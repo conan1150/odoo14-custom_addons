@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="transportation.list">
+      <field name="name">transportation_tracking list</field>
+      <field name="model">transportation.tracking</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="transportation.form">
+      <field name="name">transportation_tracking form</field>
+      <field name="model">transportation.tracking</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <group>
+              <field name="name"/>
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="transportation.action_window">
+      <field name="name">Transportation</field>
+      <field name="res_model">transportation.tracking</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- Top menu item -->
+
+    <menuitem name="Transport Tracking" id="transportation.menu_root"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Tracking" id="transportation.tracking" parent="transportation.menu_root"/>
+    <menuitem name="Container" id="transportation.container" parent="transportation.menu_root"/>
+    <menuitem name="Configuration" id="transportation.configuration" parent="transportation.menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="Tracking List" id="transportation.menu_1_list" parent="transportation.tracking"
+              action="transportation.action_window"/>
+
+  </data>
+</odoo>

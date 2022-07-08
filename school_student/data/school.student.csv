@@ -1,0 +1,6 @@
+id,name,school_id:id,total_fees,hobby_list:id
+student_1,"StuCSV 1",school_2,38000,
+student_2,"StuSix 01",school_6,42000,
+student_3,"StuSix 02",school_6,42000,
+student_4,"StuSix 03",school_6,42000,
+student_5,"Stu Many2many",school_5,27000,"hobby_3,hobby_5,hobby_7,hobby_9,hobby_11"
