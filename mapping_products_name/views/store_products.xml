@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_by_store_view_tree" model="ir.ui.view">
+            <field name="name">product.by.store.view.tree</field>
+            <field name="model">store.products</field>
+            <field name="arch" type="xml">
+                <tree string="product_by_store">
+                    <field name="store_product_default_code" string="Internal Reference" />
+                    <field name="name" string="Product" />         
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_by_store_form_view" model="ir.ui.view">
+            <field name="name">product.by.store.form.view</field>
+            <field name="model">store.products</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" string="Product" />
+                            <field name="store_product_default_code" string="Internal Reference" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="store_products_action_window">
+            <field name="name">Store Products</field>
+            <field name="res_model">store.products</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Product By Store" id="mapping_products_name.store_product" parent="mapping_products_name.menu"
+            action='store_products_action_window' />
+    </data>
+</odoo>

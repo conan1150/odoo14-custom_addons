@@ -1,0 +1,78 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="store_list_view">
+      <field name="name">store.list.view</field>
+      <field name="model">store.list</field>
+      <field name="arch" type="xml">
+        <tree editable="bottom">
+          <field name="name"/>
+          <field name="store_group_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="store_view_form" model="ir.ui.view">
+      <field name="name">store.view.form</field>
+      <field name="model">store.list</field>
+      <field name="arch" type="xml">
+        <form string="store_list_form">
+          <sheet>
+            <group>
+              <field name="name" />
+              <field name="store_group_id"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="store_group_form">
+      <field name="name">store.group.form</field>
+      <field name="model">store.group</field>
+      <field name="arch" type="xml">
+        <form>            
+          <sheet>
+            <group>
+              <field name="name" /> 
+            </group>
+            <group>
+              <notebook>
+                <page name="stores" string="Stores">
+                  <field name="store_lists">
+                    <tree editable="bottom">
+                      <field name="name" />
+                    </tree>
+                  </field>
+                </page>
+              </notebook>
+            </group>                     
+          </sheet>                      
+        </form>
+      </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="store_list_action_window">
+      <field name="name">Stores</field>
+      <field name="res_model">store.list</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="store_group_action_window">
+      <field name="name">Store Group</field>
+      <field name="res_model">store.group</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="mapping_products_name.menu" name="Stores" parent="stock.menu_stock_root" sequence="4"/>
+
+    <menuitem name="Store Group" id="mapping_products_name.store_group" parent="mapping_products_name.menu"
+              action="store_group_action_window"/>
+
+    <menuitem name="Stores" id="mapping_products_name.store_lists" parent="mapping_products_name.menu"
+              action="store_list_action_window"/>
+
+    
+
+  </data>
+</odoo>
