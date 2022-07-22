@@ -11,8 +11,10 @@
         'security/ir.model.access.csv',
 
         'views/store.xml',
-        'views/store_products.xml',
-        'views/product_extended.xml',
+        'views/product_by_stores.xml',
+        'views/btn_store_product_extended.xml',
+
+        'wizard/open_import_update_product_list_wiz.xml',
     ],
     'demo': [
         'demo/demo.xml',

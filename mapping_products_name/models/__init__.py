@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
 from . import stores
-from . import store_products
+from . import product_by_stores

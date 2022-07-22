@@ -6,23 +6,8 @@
       <field name="arch" type="xml">
         <tree editable="bottom">
           <field name="name"/>
-          <field name="store_group_id"/>
+          <field name="store_group_id" options="{'limit': 10, 'no_create_edit': true}"/>
         </tree>
-      </field>
-    </record>
-
-    <record id="store_view_form" model="ir.ui.view">
-      <field name="name">store.view.form</field>
-      <field name="model">store.list</field>
-      <field name="arch" type="xml">
-        <form string="store_list_form">
-          <sheet>
-            <group>
-              <field name="name" />
-              <field name="store_group_id"/>
-            </group>
-          </sheet>
-        </form>
       </field>
     </record>
 
@@ -66,13 +51,13 @@
 
     <menuitem id="mapping_products_name.menu" name="Stores" parent="stock.menu_stock_root" sequence="4"/>
 
-    <menuitem name="Store Group" id="mapping_products_name.store_group" parent="mapping_products_name.menu"
+    <menuitem name="Store" id="store_menu_item" parent="mapping_products_name.menu"/>
+
+    <menuitem name="Store Group" id="mapping_products_name.store_group" parent="store_menu_item"
               action="store_group_action_window"/>
 
-    <menuitem name="Stores" id="mapping_products_name.store_lists" parent="mapping_products_name.menu"
-              action="store_list_action_window"/>
-
-    
+    <menuitem name="Stores" id="mapping_products_name.store_lists" parent="store_menu_item"
+              action="store_list_action_window"/>    
 
   </data>
 </odoo>

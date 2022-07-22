@@ -1,0 +1,1 @@
+from . import open_import_update_product_list_wiz

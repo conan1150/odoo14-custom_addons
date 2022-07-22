@@ -17,3 +17,4 @@ class store_group(models.Model):
     name = fields.Char('Group Name')
     store_lists = fields.One2many('store.list', 'store_group_id', string='Store Lists')
 
+

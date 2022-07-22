@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="search_store_product_view_tree" model="ir.ui.view">
+            <field name="name">search.product.by.store.view.tree</field>
+            <field name="model">store.products</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Product Name" filter_domain="[('name', 'ilike', self)]" />
+                    <field name="store_product_default_code" string="Reference" filter_domain="[('store_product_default_code', 'ilike', self)]" />
+                    <field name="store_id" string="Store" filter_domain="[('store_id', 'ilike', self)]" />
+
+                    <group string="Group By">
+                        <filter name="store_id" string="Store" context="{'group_by': 'store_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="store_product_view_tree" model="ir.ui.view">
+            <field name="name">product.by.store.view.tree</field>
+            <field name="model">store.products</field>
+            <field name="arch" type="xml">
+                <tree string="product_by_store">
+                    <field name="store_id" />
+                    <field name="store_product_default_code" string="Internal Reference" />
+                    <field name="name" string="Product" />         
+                </tree>
+            </field>
+        </record>
+
+        <record id="store_product_form_view" model="ir.ui.view">
+            <field name="name">product.by.store.form.view</field>
+            <field name="model">store.products</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title" modifiers="{}">
+                            <label class="oe_edit_only" for="name" string="Product Name" modifiers="{}"/>
+                            <h2 modifiers="{}">
+                                <field name="name" placeholder="Product Name" on_change="1" modifiers="{'required':true}" id="name"/>
+                            </h2>
+                        </div>
+                        <br/>
+                        <group string="Internal Informations" modifiers="{}">
+                            <group>
+                                <field name="store_id" />
+                            </group>
+                            <group>
+                                <field name="store_product_default_code" />
+                                <field name="currency_id" invisible='1' />
+                                <field name="price_by_store" widget="monetary" />                              
+                            </group>                                 
+                        </group>
+                        <group string="Variantions" modifiers="{}">
+                            <field name="store_product_variant_ids">
+                                <tree editable="bottom">
+                                    <field name="store_product_sub_code" />
+                                    <field name="name" />
+                                </tree>
+                            </field>                            
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- <record id="product_by_store_view_tree" model="ir.ui.view">
+            <field name="name">Product By Stores</field>
+            <field name="model">map.product.to.other.stores</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="product_id" attrs="{'readonly': [('id', '!=', False)]}"
+                        invisible="context.get('single_product', False)" />
+                    <field name="store_id" options="{'limit': 10, 'no_create': true, 'no_create_edit': true}" />
+                    <field name="store_product_id" options="{'limit': 10, 'no_create': true, 'no_create_edit': true}" />                   
+                </tree>
+            </field>
+        </record> -->
+
+        <record id="store_product_template_inherit_view_tree" model="ir.ui.view">
+            <field name="name">store.product.template.inherit.view.tree</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//sheet//notebook" position="inside">
+                    <page string="Product by Store">
+                        <field name="product_by_store_ids">
+                            <tree editable="bottom">
+                                <field name="product_id" attrs="{'readonly': [('id', '!=', False)]}"
+                                    invisible="context.get('single_product', False)" />
+                                <field name="store_id" options="{'limit': 10, 'no_create': true, 'no_create_edit': true}" />
+                                <field name="store_product_id" options="{'limit': 10, 'no_create': true, 'no_create_edit': true}" />                   
+                            </tree>
+                        </field>                   
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="store_products_action_window">
+            <field name="name">Product By Store</field>
+            <field name="res_model">store.products</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Product By Store" id="mapping_products_name.store_product" parent="stock.menu_stock_inventory_control"
+            action='store_products_action_window' />
+    </data>
+</odoo>
