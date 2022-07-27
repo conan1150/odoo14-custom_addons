@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- <data>    
+    <data>    
         <record id="model_name_view_form" model="ir.ui.view">
             <field name="name">model_name.view.form</field>
             <field name="model">product.template</field>
@@ -15,5 +15,5 @@
                 </xpath>
             </field>
         </record>
-    </data> -->
+    </data>
 </odoo>
