@@ -6,7 +6,7 @@
     'author': "IV",
     'category': 'product',
     'version': '0.1',
-    'depends': ['base', 'stock'],
+    'depends': ['base', 'stock', 'sale'],
     'data': [
         'security/ir.model.access.csv',
 
@@ -15,6 +15,7 @@
         'views/btn_store_product_extended.xml',
 
         'wizard/open_import_update_product_list_wiz.xml',
+        'wizard/import_sale_order_wiz.xml',
     ],
     'demo': [
         'demo/demo.xml',

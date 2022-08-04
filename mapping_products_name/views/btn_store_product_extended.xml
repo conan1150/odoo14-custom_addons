@@ -15,5 +15,20 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="open_import_sale_order_list_form_view" model="ir.ui.view">
+            <field name="name">open.import.sale.order.list.form.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">                           
+                <xpath expr="//button[@name='preview_sale_order']" position="before">
+                    <button name="action_open_import_order_list" type="object" icon="fa-upload" class="oe_stat_button">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">Import List</span>
+                        </div>                                    
+                    </button>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
