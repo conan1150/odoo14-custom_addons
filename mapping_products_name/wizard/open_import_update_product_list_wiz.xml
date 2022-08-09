@@ -16,7 +16,7 @@
                         </group>
                     </group>
                     <footer>
-                        <button string="Update" name="update_product_list" type="object" class="oe_highlight"/>
+                        <button string="Update" name="update_data_click" type="object" class="oe_highlight"/>
                         <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                     </footer>
                 </form>

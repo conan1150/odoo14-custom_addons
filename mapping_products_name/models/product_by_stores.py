@@ -52,8 +52,7 @@ class store_products(models.Model):
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id')
     price_by_store = fields.Monetary(string='Unit Price', store=True)
 
-    store_product_default_code = fields.Char(
-        'Internal Reference', required=True)
+    store_product_default_code = fields.Char('Internal Reference', required=True)
 
     def name_get(self):
         result = []            
