@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_transportation_tracking,transportation.tracking,model_transportation_tracking,base.group_user,1,1,1,1
-access_transportation_container,transportation.container,model_transportation_container,base.group_user,1,1,1,1
-access_transportation_states,transportation.states,model_transportation_states,base.group_user,1,1,1,1

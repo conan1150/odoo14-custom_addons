@@ -1,10 +1,11 @@
-from odoo import api, models, fields
+from queue import Empty
+from odoo import api, models, fields, _
 from odoo.exceptions import UserError
 
 import os
 import base64
 from io import BytesIO
-import openpyxl
+import pandas as pd
 
 
 class ImportSaleOrderWiz(models.TransientModel):
@@ -15,46 +16,66 @@ class ImportSaleOrderWiz(models.TransientModel):
     file_name = fields.Char('File Name')
 
 
-    def _read_file(self):        
+    def _read_file(self):
+        data = pd.read_excel(BytesIO(base64.b64decode(self.file_data)), usecols=['product_name', 'variant', 'unit_price', 'product_qty'])
 
-        wb = openpyxl.load_workbook(filename=BytesIO(base64.b64decode(self.file_data)), data_only=True)
-        ws = wb.active
+        order_data = []
+        failed_data = []
 
-        data = []
+        for order in data.to_dict(orient='records'):
+            o_line = self._order_line(order['product_name'],
+                                    "" if pd.isna(order['variant']) else order['variant'],
+                                    order['product_qty'],
+                                    order['unit_price'])
 
-        worksheet = ws.iter_rows(min_row=2, min_col=17, max_row=None, max_col=None)
+            if o_line['failed'] and o_line['product_name'] not in failed_data:
+                failed_data.append(o_line['product_name'])
+            else:
+                order_data.append(o_line)            
 
-        for row in worksheet:
-            row_value = {}
-
-            p_code = self.env['store.products'].search([('name', '=', row[0].value), ('store_id', '=', self.store_id.id)])
-
-            row_value['product_code'] = p_code.store_product_default_code
-            row_value['product_name'] = row[0].value
-
-            pvar_code = self.env['store.products.variant'].search([('name', '=', row[2].value), ('store_product_id', '=', p_code.id)])
-
-            row_value['product_var_code'] = pvar_code.store_product_sub_code
-            row_value['product_variant'] = row[2].value
-
-            row_value['product_qty'] = row[5].value
-            row_value['product_price'] = float(row[4].value)
-            
-            data.append(row_value)
-
-        return data
+        if failed_data is Empty:
+            return order_data
+        else:
+            item_list = "\n".join(failed_data)
+            raise UserError(_(f"Failed to import items. Please check the {len(failed_data)} items : \n\n {item_list}"))
 
 
-    def sale_order_list_up(salf):
-        data = salf._read_file()
-        active_id = salf.env.context.get('active_id')
-                
-        
-        for d in data:
-            p_by_store_id = salf.env['store.products.variant'].search([('store_product_id.store_product_default_code', '=', d['product_code']), ('store_product_sub_code', '=', d['product_var_code'])]).id
-            d['product_tmpl_id'] = salf.env['map.product.to.other.stores'].browse(p_by_store_id).id
+    def _order_line(self, product_name, variant_name, product_qty, unit_price):
+        product_id = self.env['store.products'].search([('name', '=', product_name), ('store_id', '=', self.store_id.id)])
+        product_var = self.env['store.products.variant'].search([('name', '=', variant_name), ('store_product_id', '=', product_id.id)])
 
-            print(d)
+        p_id = self.env['map.product.to.other.stores'].search([('store_product_v_id', '=', product_var.id), ('store_id', '=', self.store_id.id)]).product_id.id
+
+        if p_id:
+            data_line = {'product_code': product_id.store_product_default_code,
+                        'product_name': product_name,
+                        'variant_code': product_var.store_product_sub_code,
+                        'product_qty': product_qty,
+                        'unit_price': unit_price,
+                        'product_id': p_id,
+                        'failed': False}
+
+            return data_line
+        else:
+            return {'product_name': product_name if product_var.name == "" else f'{product_name} [{product_var.name}]',
+                    'failed': True}
+
+
+    def sale_order_list_up(self):
+        active_id = self.env.context.get('active_id')
+        ex_data = self._read_file()
+
+        for order_line in ex_data:
+            self.env['sale.order.line'].create({'order_id': active_id,
+                                                'product_id': order_line['product_id'],
+                                                'product_uom_qty': order_line['product_qty'],
+                                                'price_unit': order_line['unit_price']})
+            self.env.cr.commit()
+
+        return True
+
+
+
 
     
                 
