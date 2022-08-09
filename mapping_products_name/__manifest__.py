@@ -11,11 +11,16 @@
         'security/ir.model.access.csv',
 
         'views/store.xml',
+        'views/assets.xml',
         'views/product_by_stores.xml',
         'views/btn_store_product_extended.xml',
+        "views/btn_import_sale_order.xml",
 
         'wizard/open_import_update_product_list_wiz.xml',
         'wizard/import_sale_order_wiz.xml',
+    ],
+    'qweb': [
+        "static/src/xml/btn_import_sale_order.xml",
     ],
     'demo': [
         'demo/demo.xml',

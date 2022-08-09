@@ -14,5 +14,4 @@ class Partner(models.Model):
     _inherit = 'res.partner'
 
     store_ids = fields.One2many('store.list', 'store_group_id', string='Store')
-
-
+    

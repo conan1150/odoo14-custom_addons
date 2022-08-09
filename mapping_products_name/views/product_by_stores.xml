@@ -99,34 +99,7 @@
                     <field name="store_product_v_id" options="{'no_quick_create': true, 'no_create_edit': true}" />    
                 </tree>
             </field>
-        </record>
-
-        <!-- <record id="store_product_template_inherit_view_tree" model="ir.ui.view">
-            <field name="name">store.product.template.inherit.view.tree</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view" />
-            <field name="arch" type="xml">
-                <xpath expr="//sheet//notebook" position="inside">
-                    <page string="Product by Store">
-                        <field name="product_by_store_ids">
-                            <tree editable="bottom">
-                                <field name="product_id" groups="product.group_product_variant" domain="[('product_tmpl_id', '=', id)]" options="{'no_create_edit': True}"/>
-                            </tree>
-                        </field>
-                        
-                        <field name="product_variant_ids">
-                            <tree>                                
-                                <field name="product_by_store_ids" widget="many2one_tag">
-                                    <tree>
-                                        <field name="store_product_v_id" />
-                                    </tree>                                    
-                                </field>   
-                            </tree>
-                        </field>                   
-                    </page>
-                </xpath>
-            </field>
-        </record> -->
+        </record>        
 
         <record model="ir.actions.act_window" id="store_products_action_window">
             <field name="name">Product By Store</field>
