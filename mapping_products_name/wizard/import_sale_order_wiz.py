@@ -17,21 +17,22 @@ class ImportSaleOrderWiz(models.TransientModel):
 
 
     def _read_file(self):        
-        data_file = pd.read_excel(BytesIO(base64.b64decode(self.file_data)), usecols=[0, 3, 16, 18, 20, 21, 42, 43, 45, 46, 47, 48, 49])
+        data_file = pd.read_excel(BytesIO(base64.b64decode(self.file_data)), usecols=[0, 3, 4, 16, 18, 20, 21, 42, 43, 45, 46, 47, 48, 49])
         data_dict = [{'order_no': row[0],
+                        'date_order': row[2],
                         'user_acc': row[1],
                         'parent_id': self.store_id.store_group_id.id,
-                        'product_name': row[2],
-                        'variant': "" if pd.isna(row[3]) else row[3],
-                        'unit_prict': row[4],
-                        'qty': row[5],
-                        'recipient_name': row[6],
-                        'addr': {'phone_number': row[7].strip("*"),
-                                'address': row[8].split()[:-3],
-                                'country_id': row[9],
-                                'state_id': row[10].replace("จังหวัด", "").replace("มหานคร", ""),
-                                'city': row[11],
-                                'zip_code': str(row[12])
+                        'product_name': row[3],
+                        'variant': "" if pd.isna(row[4]) else row[4],
+                        'unit_price': row[5],
+                        'qty': row[6],
+                        'recipient_name': row[7],
+                        'addr': {'phone_number': row[8].strip("*"),
+                                'address': row[9].split()[:-3],
+                                'country_id': row[10],
+                                'state_id': row[11].replace("จังหวัด", "").replace("มหานคร", ""),
+                                'city': row[12],
+                                'zip_code': str(row[13])
                                 },
                         } for index, row in data_file.iterrows()]
 
@@ -39,10 +40,10 @@ class ImportSaleOrderWiz(models.TransientModel):
         for data in data_dict:
             partner_id = self._contact_check(data['user_acc'], data['recipient_name'], data['addr'], data['parent_id'])
 
-            order_line = {
+            order_line = {                
                 'product_name': data['product_name'],
                 'variant': data['variant'],
-                'unit_prict': data['unit_prict'],
+                'unit_price': data['unit_price'],
                 'qty': data['qty'],
             }
 
@@ -52,51 +53,40 @@ class ImportSaleOrderWiz(models.TransientModel):
                 if order_id:
                     self._create_new_order_line(order_id.id, order_line)
                 else:
-                    order_id_s = self._create_new_order(data['order_no'], partner_id)
+                    order_id_s = self._create_new_order(data['order_no'], data['date_order'], partner_id)
                     self._create_new_order_line(order_id_s, order_line)
 
 
     def _contact_check(self, contact_name, delivery_name, addr, parent_id):
         contact_id = self.env['res.partner'].search([('name', '=', contact_name), ('parent_id', '=', parent_id)])
+        contact_addr = self._contact_address(addr)
 
         if contact_id:
             delivery_id = self.env['res.partner'].search([('name', '=', delivery_name), ('parent_id', '=', contact_id.id)])
             if delivery_id:
                 return delivery_id.id
             else:
-                addr_position_cut = int(len(addr['address'])/2)
-                addr1 = " ".join(addr['address'][:addr_position_cut + 1])
-                addr2 = " ".join(addr['address'][addr_position_cut + 1:])
-
-                addr.pop('address')
-                addr['addr1'] = addr1
-                addr['addr2'] = addr2
-                
-                state_area = self.env['res.country.state'].search([('name', '=', addr['state_id'])])
-                addr['state_id'] = state_area.id
-                addr['country_id'] = state_area.country_id.id
-
-                self._add_new_contact(delivery_name, contact_id.id, addr)
+                self._add_new_contact(delivery_name, contact_id.id, contact_addr)
                 return self.env['res.partner'].search([('name', '=', delivery_name), ('parent_id', '=', contact_id.id)]).id
         else:
-            self._add_new_contact(contact_name, parent_id)
-            contact_id = self.env['res.partner'].search([('name', '=', contact_name), ('parent_id', '=', parent_id)])
-            if contact_id:
-                self._add_new_contact(delivery_name, contact_id.id, addr)
-                return self.env['res.partner'].search([('name', '=', delivery_name), ('parent_id', '=', contact_id.id)])
+            contact_id_s = self._add_new_contact(contact_name, parent_id)
+            self._add_new_contact(delivery_name, contact_id_s.id, contact_addr)
+
+            return self.env['res.partner'].search([('name', '=', delivery_name), ('parent_id', '=', contact_id_s.id)]).id           
 
 
     def _add_new_contact(self, contact_name, parent_id, address=None):
         if address == None:
-            self.env['res.partner'].create({'name': contact_name,
+            contact_id = self.env['res.partner'].create({'name': contact_name,
                                             'parent_id': parent_id,
                                             'type': 'contact',
                                             'is_company': False,
                                             'customer_rank': 1,
                                             'partner_gid': 0})
             self.env.cr.commit()
+            return contact_id
         else:
-            self.env['res.partner'].create({'name': contact_name,
+            contact_id = self.env['res.partner'].create({'name': contact_name,
                                             'parent_id': parent_id,
                                             'type': 'delivery',
                                             'is_company': False,
@@ -110,10 +100,28 @@ class ImportSaleOrderWiz(models.TransientModel):
                                             'phone': address['phone_number']
                                             })
             self.env.cr.commit()
+            return contact_id
 
 
-    def _create_new_order(self, order_no, partner_id):
+    def _contact_address(self, addr):
+        addr_position_cut = int(len(addr['address'])/2)
+
+        addr1 = " ".join(addr['address'][:addr_position_cut + 1])
+        addr2 = " ".join(addr['address'][addr_position_cut + 1:])
+        
+        addr['addr1'] = addr1
+        addr['addr2'] = addr2
+        addr.pop('address')
+        
+        state_area = self.env['res.country.state'].search([('name', '=', addr['state_id'])])
+        addr['state_id'] = state_area.id
+        addr['country_id'] = state_area.country_id.id
+
+        return addr
+
+    def _create_new_order(self, order_no, date_order, partner_id):
         order_id = self.env['sale.order'].create({'client_order_ref': order_no,
+                                        'date_order': date_order,
                                         'state': 'draft',
                                         'partner_id': partner_id})
         self.env.cr.commit()
@@ -122,36 +130,22 @@ class ImportSaleOrderWiz(models.TransientModel):
 
     def _create_new_order_line(self, order_id, order_line):
         product_id = self.env['store.products'].search([('name', '=', order_line['product_name']), ('store_id', '=', self.store_id.id)])
-        product_var = self.env['store.products.variant'].search([('name', '=', order_line['variant']), ('store_product_id', '=', product_id.id)])
+        product_var = self.env['store.products.variant'].search([('name', '=', order_line['variant']), ('store_product_id', '=', product_id[-1].id)])        
 
-        print(product_var)
+        o_product_id = self.env['map.product.to.other.stores'].search([('store_product_v_id', '=', product_var.id), ('store_id', '=', self.store_id.id)]).product_id
 
-        # p_id = self.env['map.product.to.other.stores'].search([('store_product_v_id', '=', product_var.id), ('store_id', '=', self.store_id.id)]).product_id.id
-
-        # if p_id:
-        #     data_line = {'product_code': product_id.store_product_default_code,
-        #                 'product_name': product_name,
-        #                 'variant_code': product_var.store_product_sub_code,
-        #                 'product_qty': product_qty,
-        #                 'unit_price': unit_price,
-        #                 'product_id': p_id,
-        #                 'failed': False}
-
-        #     return data_line
-        # else:
-        #     return {'product_name': product_name if product_var.name == "" else f'{product_name} [{product_var.name}]',
-        #             'failed': True}
+        if o_product_id:
+            self.env['sale.order.line'].create({'order_id': order_id,                                                
+                                                'product_id': o_product_id[0].id,
+                                                'product_uom_qty': order_line['qty'],
+                                                'price_unit': order_line['unit_price']})
+            self.env.cr.commit()
+        else:
+            print(order_line) 
 
 
     def sale_order_list_up(self):
-        ex_data = self._read_file()
-
-        # for order_line in ex_data:
-        #     self.env['sale.order.line'].create({'order_id': active_id,
-        #                                         'product_id': order_line['product_id'],
-        #                                         'product_uom_qty': order_line['product_qty'],
-        #                                         'price_unit': order_line['unit_price']})
-        #     self.env.cr.commit()
+        ex_data = self._read_file()        
 
         return {
                     'type': 'ir.actions.client',
