@@ -7,6 +7,8 @@ import base64
 from io import BytesIO
 import pandas as pd
 
+item_not_found = []
+
 
 class ImportSaleOrderWiz(models.TransientModel):
     _name = 'import.sale.order.wiz'
@@ -141,22 +143,30 @@ class ImportSaleOrderWiz(models.TransientModel):
                                                 'price_unit': order_line['unit_price']})
             self.env.cr.commit()
         else:
-            print(order_line) 
+            global item_not_found
+
+            order_no = self.env['sale.order'].browse(order_id)
+            item_not_found.append({'Order No.': order_no.client_order_ref,
+                                    'Item': order_line['product_name']})
+            order_no.unlink()
 
 
     def sale_order_list_up(self):
-        ex_data = self._read_file()        
+        ex_data = self._read_file() 
 
         return {
+            'name': _('Items not found!'),
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'warning',
+                'title': _('Items not found!'),
+                'message': f'{len(item_not_found)} items not found.',
+                'fadeout': 'slow',
+                'next': {
                     'type': 'ir.actions.client',
                     'tag': 'reload',
                 }
-
-
-
-
-    
-                
-
-
+            },
+        }
     

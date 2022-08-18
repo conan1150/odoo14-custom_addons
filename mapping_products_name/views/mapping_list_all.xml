@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="search_mapping_list_view_tree" model="ir.ui.view">
+            <field name="name">search.mapping.list.view.tree</field>
+            <field name="model">map.product.to.other.stores</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="store_product_v_id" string="Product" filter_domain="[('store_product_v_id', 'ilike', self)]" />
+                    <field name="store_id" string="Store" filter_domain="[('store_id', 'ilike', self)]" />
+
+                    <group string="Group By">
+                        <filter name="store_id" string="Store" context="{'group_by': 'store_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="product_mapping_list_view_tree" model="ir.ui.view">
+            <field name="name">product.mapping.list.view</field>
+            <field name="model">map.product.to.other.stores</field>
+            <field name="inherit_id" ref="mapping_products_name.product_by_store_view_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree//field[@name='store_id']" position="replace">
+                </xpath>
+                <xpath expr="//tree//field[@name='product_id']" position="replace">
+                </xpath>
+                <xpath expr="//tree//field[@name='store_product_v_id']" position="replace">
+                    <field name="store_product_v_id" optional="show" />
+                </xpath>
+
+                <xpath expr="//tree//field[@name='store_product_v_id']" position="before">
+                    <field name="store_id" width="250px" optional="show" />
+                </xpath>
+                <xpath expr="//tree//field[@name='store_product_v_id']" position="after">
+                    <field name="product_id" optional="show" />
+                </xpath>
+
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="editable">top</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_mapping_action_window" model="ir.actions.act_window">
+            <field name="name">Product Mapping List</field>
+            <field name="res_model">map.product.to.other.stores</field>
+            <field name="context">{'order': 'store_id,store_product_v_id'}</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Mapping List" id="mapping_products_name.mapping_list" parent="mapping_products_name.store_menu_item"
+            action='product_mapping_action_window' />
+    </data>
+</odoo>

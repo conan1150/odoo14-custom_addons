@@ -13,8 +13,9 @@
         'views/store.xml',
         'views/assets.xml',
         'views/product_by_stores.xml',
+        'views/mapping_list_all.xml',
         'views/btn_store_product_extended.xml',
-        "views/btn_import_sale_order.xml",
+        'views/btn_import_sale_order.xml',
 
         'wizard/open_import_update_product_list_wiz.xml',
         'wizard/import_sale_order_wiz.xml',
