@@ -44,9 +44,8 @@
 		</field>
 	</record>	
 	
-	<record id="action_sale_lines_menu"
-		model="ir.actions.act_window">
-		<field name="name">Sale Order Lines</field>
+	<record id="action_sale_lines_menu" model="ir.actions.act_window">
+		<field name="name">Sales Order Lines</field>
 		<field name="type">ir.actions.act_window</field>
 		<field name="res_model">sale.order.line</field>
 		<field name="view_id" ref="sale_order_line.view_sale_order_line_tree"/>

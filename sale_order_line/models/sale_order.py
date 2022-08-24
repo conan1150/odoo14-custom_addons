@@ -20,7 +20,7 @@ class SaleOrderLine(models.Model):
 
         rtn = self.env['sale.order'].browse(order_id)
         
-        for r in rtn:
-            print(r.context())
+        for order in rtn:
+            order.action_confirm()
 
-        return True
+        
