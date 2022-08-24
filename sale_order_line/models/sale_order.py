@@ -2,10 +2,25 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo import models, fields, api, _
 
+
+
 class SaleOrderLine(models.Model):   
     _inherit = "sale.order.line"
     
-    order_ref = fields.Char('Order Reference', related='order_id.name')
+    order_ids = fields.Char('Order Reference', related='order_id.name', store=True)
+    customer_ref = fields.Char('Customer Reference', related='order_id.client_order_ref', store=True)
     customer_id = fields.Many2one('res.partner', related='order_id.partner_id')
+    order_state = fields.Selection('Status', related='order_id.state')
+    forecast_ava = fields.Float('stock.move', related='move_ids.picking_id.move_ids_without_package.forecast_availability')
 
 
+    def confirm_orders(self):
+        active_ids = self.env.context.get('active_ids')
+        order_id = list(dict.fromkeys([o.id for o in self.env['sale.order.line'].browse(active_ids).order_id]))
+
+        rtn = self.env['sale.order'].browse(order_id)
+        
+        for r in rtn:
+            print(r.context())
+
+        return True

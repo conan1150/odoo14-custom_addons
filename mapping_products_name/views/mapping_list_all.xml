@@ -6,8 +6,10 @@
             <field name="model">map.product.to.other.stores</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="store_product_v_id" string="Product" filter_domain="[('store_product_v_id', 'ilike', self)]" />
+                    <field name="store_product_v_id" string="Product (Store)" filter_domain="[('store_product_v_id', 'ilike', self)]" />
                     <field name="store_id" string="Store" filter_domain="[('store_id', 'ilike', self)]" />
+                    <field name="product_id" string="Product (Main)" filter_domain="['|', ('product_id.name', 'ilike', self),
+                                                                                            ('product_id.default_code', 'ilike', self)]" />
 
                     <group string="Group By">
                         <filter name="store_id" string="Store" context="{'group_by': 'store_id'}" />
@@ -19,7 +21,6 @@
         <record id="product_mapping_list_view_tree" model="ir.ui.view">
             <field name="name">product.mapping.list.view</field>
             <field name="model">map.product.to.other.stores</field>
-            <field name="inherit_id" ref="mapping_products_name.product_by_store_view_tree" />
             <field name="arch" type="xml">
                 <xpath expr="//tree//field[@name='store_id']" position="replace">
                 </xpath>

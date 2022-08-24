@@ -86,8 +86,12 @@ class map_product_to_other_stores(models.Model):
 
     def _domain_store_product_id(self):
         active_ids = self.env.context.get('active_ids')
+        if active_ids:
+            domain = [('product_tmpl_id', 'in', active_ids)]
+        else:
+            domain = None
 
-        return [('product_tmpl_id', 'in', active_ids)]
+        return domain
 
     def get_product_id(self):
         products = self.env['product.product'].search([('product_tmpl_id', '=', self.env.context.get('active_id'))])
@@ -119,7 +123,6 @@ class map_product_to_other_stores(models.Model):
 
         return action
 
-    # product_tmpl_id = fields.Many2one('product.template', 'Product Template')
     product_id = fields.Many2one('product.product', 'Product', domain=lambda self: self._domain_store_product_id(), default=get_product_id, required=True)
 
     store_id = fields.Many2one('store.list', string='Store', required=True)

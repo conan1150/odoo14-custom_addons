@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-<!--    <delete id="student_6" model="school.student" />-->
-<!--    <delete id="school.school_8" model="school.profile" />-->
-<!--    <delete id="hobby_8" model="hobby" />-->
-<!--    <delete id="school_student.menu_2" model="ir.ui.menu" />-->
-
-    <delete model="hobby" search="[('name', 'ilike', 'Run')]" />
-</odoo>

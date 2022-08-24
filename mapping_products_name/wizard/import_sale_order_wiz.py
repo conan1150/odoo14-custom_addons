@@ -7,7 +7,7 @@ import base64
 from io import BytesIO
 import pandas as pd
 
-item_not_found = []
+item_not_found = 0
 
 
 class ImportSaleOrderWiz(models.TransientModel):
@@ -131,10 +131,19 @@ class ImportSaleOrderWiz(models.TransientModel):
 
 
     def _create_new_order_line(self, order_id, order_line):
-        product_id = self.env['store.products'].search([('name', '=', order_line['product_name']), ('store_id', '=', self.store_id.id)])
-        product_var = self.env['store.products.variant'].search([('name', '=', order_line['variant']), ('store_product_id', '=', product_id[-1].id)])        
+        product_id = self.env['store.products'].search([('name', '=', order_line['product_name']), ('store_id', '=', self.store_id.id)])                
 
-        o_product_id = self.env['map.product.to.other.stores'].search([('store_product_v_id', '=', product_var.id), ('store_id', '=', self.store_id.id)]).product_id
+        if product_id.id:
+            product_var = self.env['store.products.variant'].search([('name', '=', order_line['variant']), ('store_product_id', '=', product_id[-1].id)])
+            if product_var.id:
+                o_product_id = self.env['map.product.to.other.stores'].search([('store_product_v_id', '=', product_var.id), ('store_id', '=', self.store_id.id)]).product_id
+            else:
+                o_product_id = False
+                order_line['state'] = 'product_v_error'
+        else:
+            o_product_id = False
+            order_line['state'] = 'product_error'
+        
 
         if o_product_id:
             self.env['sale.order.line'].create({'order_id': order_id,                                                
@@ -144,11 +153,21 @@ class ImportSaleOrderWiz(models.TransientModel):
             self.env.cr.commit()
         else:
             global item_not_found
+            item_not_found += 1
 
-            order_no = self.env['sale.order'].browse(order_id)
-            item_not_found.append({'Order No.': order_no.client_order_ref,
-                                    'Item': order_line['product_name']})
-            order_no.unlink()
+            order_line['order_no'] = self.env['sale.order'].browse(order_id).client_order_ref
+            order_line['state'] = 'mapping_error'
+            
+            self.env['wrong.upload.so.list'].create({'name': order_line['order_no'],
+                                                    'store_id': self.store_id.id,
+                                                    'order_id': order_id,
+                                                    'product_name': order_line['product_name'],
+                                                    'product_variant': order_line['variant'],
+                                                    'order_qty': order_line['qty'],
+                                                    'unit_price': order_line['unit_price'],
+                                                    'state': order_line['state']})
+            self.env.cr.commit()
+            # order_no.unlink()
 
 
     def sale_order_list_up(self):
@@ -161,7 +180,7 @@ class ImportSaleOrderWiz(models.TransientModel):
             'params': {
                 'type': 'warning',
                 'title': _('Items not found!'),
-                'message': f'{len(item_not_found)} items not found.',
+                'message': f'{item_not_found} items not found.',
                 'fadeout': 'slow',
                 'next': {
                     'type': 'ir.actions.client',

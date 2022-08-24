@@ -82,8 +82,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="store_product_id" />
-                    <field name="name" />
-                    
+                    <field name="name" />                    
                 </tree>
             </field>
         </record>
@@ -107,7 +106,7 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem name="Product By Store" id="mapping_products_name.store_product" parent="stock.menu_stock_inventory_control"
+        <menuitem name="Product By Store" id="mapping_products_name.store_product" parent="mapping_products_name.update_menu_item"
             action='store_products_action_window' />
     </data>
 </odoo>

@@ -14,6 +14,7 @@
         'views/assets.xml',
         'views/product_by_stores.xml',
         'views/mapping_list_all.xml',
+        'views/wrong_upload_so_list.xml',
         'views/btn_store_product_extended.xml',
         'views/btn_import_sale_order.xml',
 

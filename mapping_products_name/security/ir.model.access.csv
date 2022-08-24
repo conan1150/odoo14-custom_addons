@@ -3,5 +3,6 @@ store_list,store_list,model_store_list,base.group_user,1,1,1,1
 store_products,store_products,model_store_products,base.group_user,1,1,1,1
 store_products_variant,store_products_variant,model_store_products_variant,base.group_user,1,1,1,1
 map_product_to_other_stores,map_product_to_other_stores,model_map_product_to_other_stores,base.group_user,1,1,1,1
+wrong_upload_so_list,wrong_upload_so_list,model_wrong_upload_so_list,base.group_user,1,1,1,1
 access_open_import_update_product_list_wiz,open_import_update_product_list_wiz,model_open_import_update_product_list_wiz,base.group_user,1,1,1,1
 access_import_sale_order_wiz,import_sale_order_wiz,model_import_sale_order_wiz,base.group_user,1,1,1,1
