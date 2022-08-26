@@ -5,6 +5,7 @@ from select import select
 from xmlrpc.client import Fault
 from odoo import models, fields, api, _
 from odoo.osv import expression
+from openerp.exceptions import UserError
 from lxml import etree
 
 
@@ -82,10 +83,11 @@ class store_products_variant(models.Model):
 class map_product_to_other_stores(models.Model):
     _name = 'map.product.to.other.stores'
     _description = 'map_product_to_other_stores'
+    _sql_constraints = [('unique_mapping', 'unique(store_id, product_id, store_product_v_id)', 'Cannot Use one tracker twice!\nPlease, select a different product')]
     
 
     def _domain_store_product_id(self):
-        active_ids = self.env.context.get('active_ids')
+        active_ids = self.env.context.get('active_ids') 
         if active_ids:
             domain = [('product_tmpl_id', 'in', active_ids)]
         else:
@@ -124,9 +126,7 @@ class map_product_to_other_stores(models.Model):
         return action
 
     product_id = fields.Many2one('product.product', 'Product', domain=lambda self: self._domain_store_product_id(), default=get_product_id, required=True)
-
-    store_id = fields.Many2one('store.list', string='Store', required=True)
-    
+    store_id = fields.Many2one('store.list', string='Store', required=True)    
     store_product_v_id = fields.Many2one('store.products.variant', string='Product By Store', required=True)  
 
     @api.onchange("store_id")
@@ -136,6 +136,20 @@ class map_product_to_other_stores(models.Model):
             store = self.store_id.id
             self.store_product_v_id = False
         return {'domain': {'store_product_v_id': [('store_product_id.store_id','=', store)]}}
+
+    @api.model
+    def create(self, vals):
+        check_dup = self.env['map.product.to.other.stores'].search([('product_id', '=', vals['product_id']),
+                                                                    ('store_id', '=', vals['store_id']),
+                                                                    ('store_product_v_id', '=', vals['store_product_v_id'])])
+
+        try:
+            if check_dup.id:
+                raise ValueError("The item already exists, please check.")
+            else:
+                return super(map_product_to_other_stores, self).create(vals)
+        except ValueError as err:
+            raise UserError(_(err)) 
 
 
 class StoreListInherited(models.Model):

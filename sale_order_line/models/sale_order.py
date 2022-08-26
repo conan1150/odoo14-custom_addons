@@ -3,7 +3,6 @@
 from odoo import models, fields, api, _
 
 
-
 class SaleOrderLine(models.Model):   
     _inherit = "sale.order.line"
     
@@ -11,7 +10,7 @@ class SaleOrderLine(models.Model):
     customer_ref = fields.Char('Customer Reference', related='order_id.client_order_ref', store=True)
     customer_id = fields.Many2one('res.partner', related='order_id.partner_id')
     order_state = fields.Selection('Status', related='order_id.state')
-    forecast_ava = fields.Float('stock.move', related='move_ids.picking_id.move_ids_without_package.forecast_availability')
+    on_hand_today = fields.Float('On Hand', related='qty_available_today')
 
 
     def confirm_orders(self):
@@ -19,8 +18,9 @@ class SaleOrderLine(models.Model):
         order_id = list(dict.fromkeys([o.id for o in self.env['sale.order.line'].browse(active_ids).order_id]))
 
         rtn = self.env['sale.order'].browse(order_id)
-        
+
         for order in rtn:
             order.action_confirm()
 
-        
+
+            

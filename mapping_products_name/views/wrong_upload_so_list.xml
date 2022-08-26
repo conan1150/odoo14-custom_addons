@@ -37,8 +37,5 @@
         <menuitem name="Wrong Upload Sale Order" id="sale_order_menu_item" parent="mapping_products_name.sale_order_list_menu"
                 action="wrong_upload_sale_order_window_action"/>
 
-        <menuitem name="Wrong Upload Sale Order" id="sale_order_menu_item_to_sale" parent="sale.sale_order_menu"
-                action="wrong_upload_sale_order_window_action"/>
-
     </data>
 </odoo>

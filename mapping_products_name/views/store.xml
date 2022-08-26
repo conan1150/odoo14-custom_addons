@@ -17,11 +17,11 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="mapping_products_name.menu" name="Stores" parent="stock.menu_stock_root" sequence="4"/>
+    <menuitem id="mapping_products_name.menu" name="Shops" parent="sale.sale_menu_root" sequence="4"/>
 
-    <menuitem name="Store" id="store_menu_item" parent="mapping_products_name.menu"/>
+    <menuitem name="Shops" id="store_menu_item" parent="mapping_products_name.menu"/>
 
-    <menuitem name="Stores" id="mapping_products_name.store_lists" parent="store_menu_item"
+    <menuitem name="Shop" id="mapping_products_name.store_lists" parent="store_menu_item"
               action="store_list_action_window"/>    
 
   </data>
