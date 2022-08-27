@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="stock_pick_delivery_inher_search_tree" model="ir.ui.view">
+      <field name="name">stock_pick_delivery_inher.search.tree</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_internal_search" />
+      <field name="arch" type="xml">
+        <xpath expr="//search//field[@name='name']" position="before">
+          <field name="custom_ref" string="Customer_ref" filter_domain="[('custom_ref', 'ilike', self)]"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+
+  <data>
+    <record id="stock_pick_delivery_inher_view_tree" model="ir.ui.view">
+      <field name="name">stock_pick_delivery_inher.view.tree</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.vpicktree" />
+      <field name="arch" type="xml">
+        <xpath expr="//tree//field[@name='name']" position="after">
+          <field name="custom_ref" optional="show" />
+        </xpath>
+      </field>
+    </record>
+  </data>
+
+  <data>
+    <record id="stock_pick_delivery_inher_form" model="ir.ui.view">
+      <field name="name">stock_pick_delivery_inher.form</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//group//field[@name='origin']" position="after">
+          <field name="custom_ref" />
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

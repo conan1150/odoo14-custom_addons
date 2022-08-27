@@ -36,28 +36,30 @@ class StockMergeDeliveryOrderWizard(models.TransientModel):
 
         order_lines = []
 
-        for i in self.product_ids:
-            if i.product_id.display_name not in [p['product_name'] for p in order_lines]:
-                line = {
-                        'product_name': i.product_id.display_name,
-                        'order_no': f'{i.reference}' if i.origin is False else f'{i.reference}/{i.origin}',
-                        'qty': i.product_uom_qty,
-                        'location': i.location_id.name
-                    }                
-                order_lines.append(line)
-            else:
-                order_index = next((index for (index, d) in enumerate(order_lines) if d["product_name"] == i.product_id.display_name), None)
-                order_lines[order_index]['order_no'] += "" if search(f'{i.reference}/{i.origin}', order_lines[order_index]['order_no']) else f', {i.reference}/{i.origin}'
-                order_lines[order_index]['qty'] += i.product_uom_qty
-                order_lines[order_index]['location'] += "" if search(i.location_id.name, order_lines[order_index]['location']) else f', {i.location_id.name}'
-                # order_lines[order_index]['location'] += "" if i.location_id.name == order_lines[order_index]['location'] else f", {i.location_id.name}"
+        print(delivery_list)
+
+        # for i in self.product_ids:
+        #     if i.product_id.display_name not in [p['product_name'] for p in order_lines]:
+        #         line = {
+        #                 'product_name': i.product_id.display_name,
+        #                 'order_no': f'{i.reference}' if i.origin is False else f'{i.reference}/{i.origin}',
+        #                 'qty': i.product_uom_qty,
+        #                 'location': i.location_id.name
+        #             }                
+        #         order_lines.append(line)
+        #     else:
+        #         order_index = next((index for (index, d) in enumerate(order_lines) if d["product_name"] == i.product_id.display_name), None)
+        #         order_lines[order_index]['order_no'] += "" if search(f'{i.reference}/{i.origin}', order_lines[order_index]['order_no']) else f', {i.reference}/{i.origin}'
+        #         order_lines[order_index]['qty'] += i.product_uom_qty
+        #         order_lines[order_index]['location'] += "" if search(i.location_id.name, order_lines[order_index]['location']) else f', {i.location_id.name}'
+        #         # order_lines[order_index]['location'] += "" if i.location_id.name == order_lines[order_index]['location'] else f", {i.location_id.name}"
 
 
-        for p in order_lines:
-            p['qty'] = '{:,.0f}'.format(p['qty'])
+        # for p in order_lines:
+        #     p['qty'] = '{:,.0f}'.format(p['qty'])
 
 
-        data = {'order_lines': order_lines,
-                'partner_ids': [i.display_name for i in self.partner_ids]}
+        # data = {'order_lines': order_lines,
+        #         'partner_ids': [i.display_name for i in self.partner_ids]}
 
-        return self.env.ref('merge_delivery_order.delivery_order_merge_action').report_action(self, data=data)
+        # return self.env.ref('merge_delivery_order.delivery_order_merge_action').report_action(self, data=data)
