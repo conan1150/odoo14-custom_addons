@@ -22,5 +22,8 @@ class SaleOrderLine(models.Model):
         for order in rtn:
             order.action_confirm()
 
+            picking = self.env['stock.picking'].search([('sale_id.id', '=', order.id)])
+            picking.action_assign()
+
 
             

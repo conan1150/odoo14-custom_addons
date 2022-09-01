@@ -12,9 +12,8 @@
         'views/views.xml',
         'views/templates.xml',
         'wizard/merge_delivery_order_wizard.xml',
-        'report/delivery_report_merge.xml',
+        'report/delivery_requisition_report_pdf.xml',
+        'report/report.xml',
     ],
-    'demo': [
-        'demo/demo.xml',
-    ],
+    'qweb': [],
 }

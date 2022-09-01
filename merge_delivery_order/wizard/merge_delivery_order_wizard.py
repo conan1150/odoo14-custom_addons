@@ -1,65 +1,49 @@
+from queue import Empty
 from odoo import api, models, fields
-from re import search
-
-
-class MergeDeliveryOrderLine(models.TransientModel):
-    _name = 'delivery.order.merge.line'
-    _description = 'Merge Delivery Order Line'
-    _order = 'min_id asc'
-
-    wiz_id = fields.Many2one('stock.merge.delivery.order.wizard', 'Wizard')
-    min_id = fields.Integer('MinID')
-    aggr_ids = fields.Char('Ids', required=True)
-
 
 class StockMergeDeliveryOrderWizard(models.TransientModel):
-    _name = 'stock.merge.delivery.order.wizard'    
+    _name = 'stock.merge.delivery.order.wizard'
 
     @api.model
     def default_get(self, fields):
         res = super(StockMergeDeliveryOrderWizard, self).default_get(fields)
         active_ids = self.env.context.get('active_ids')
 
-        res['order_ids'] = self.env['stock.picking'].browse(active_ids)
-        res['partner_ids'] = self.env['stock.picking'].browse(active_ids).partner_id
-        res['product_ids'] = self.env['stock.picking'].browse(active_ids).move_line_ids_without_package
+        orders = self.env['stock.picking'].browse(active_ids)
+
+        res['order_line_ids'] = orders.move_line_ids_without_package
 
         return res  
 
-    order_ids = fields.Many2many('stock.picking', string='Delivery Order')
-    partner_ids = fields.Many2many('res.partner', string='Customers')
-    product_ids = fields.Many2many('stock.move.line', string='Product')
-    
+    order_line_ids = fields.Many2many('stock.move.line', string='Order Line')
 
     def action_report_merge_order(self):
-        delivery_list = [i.name for i in self.order_ids]
+        product_requisition = []        
 
-        order_lines = []
+        for product in self.order_line_ids:
+            order_id = self.env['stock.picking'].browse(product.picking_id.id).group_id.sale_id
 
-        print(delivery_list)
+            order_dict = {'product_id': product.product_id.id,
+                            'name': product.product_id.display_name,
+                            'product_qty': product.product_uom_qty,
+                            'location': product.location_id.name,
+                            'unit': product.product_uom_id.name,
+                            'order_detail': [{'order_no': order_id.name,
+                                            'order_ref': order_id.client_order_ref,
+                                            'order_qty': product.product_uom_qty,
+                                            'unit': product.product_uom_id.name}]}
 
-        # for i in self.product_ids:
-        #     if i.product_id.display_name not in [p['product_name'] for p in order_lines]:
-        #         line = {
-        #                 'product_name': i.product_id.display_name,
-        #                 'order_no': f'{i.reference}' if i.origin is False else f'{i.reference}/{i.origin}',
-        #                 'qty': i.product_uom_qty,
-        #                 'location': i.location_id.name
-        #             }                
-        #         order_lines.append(line)
-        #     else:
-        #         order_index = next((index for (index, d) in enumerate(order_lines) if d["product_name"] == i.product_id.display_name), None)
-        #         order_lines[order_index]['order_no'] += "" if search(f'{i.reference}/{i.origin}', order_lines[order_index]['order_no']) else f', {i.reference}/{i.origin}'
-        #         order_lines[order_index]['qty'] += i.product_uom_qty
-        #         order_lines[order_index]['location'] += "" if search(i.location_id.name, order_lines[order_index]['location']) else f', {i.location_id.name}'
-        #         # order_lines[order_index]['location'] += "" if i.location_id.name == order_lines[order_index]['location'] else f", {i.location_id.name}"
+            if product_requisition:
+                if order_dict['product_id'] in [o['product_id'] for o in product_requisition]:
+                    for order in product_requisition:
+                        if order_dict['product_id'] == order['product_id']:
+                            order['product_qty'] += order_dict['product_qty']
+                            order['order_detail'] += order_dict['order_detail']
+                else:
+                    product_requisition.append(order_dict)
+            else:
+                product_requisition.append(order_dict)
 
+        data = {'product_requisition': product_requisition}
 
-        # for p in order_lines:
-        #     p['qty'] = '{:,.0f}'.format(p['qty'])
-
-
-        # data = {'order_lines': order_lines,
-        #         'partner_ids': [i.display_name for i in self.partner_ids]}
-
-        # return self.env.ref('merge_delivery_order.delivery_order_merge_action').report_action(self, data=data)
+        return self.env.ref('merge_delivery_order.delivery_order_merge_action').report_action(self, data=data)

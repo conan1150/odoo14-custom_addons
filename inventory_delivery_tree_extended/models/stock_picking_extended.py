@@ -8,6 +8,7 @@ class StockPicking(models.Model):
     _order = 'name desc'
 
     custom_ref = fields.Char("Customer Ref.", compute='_compute_order_ref', store=True)
+    # custom_no = fields.Many2one(related="group_id.sale_id.client_order_ref", string="Sales Order", store=True, readonly=False)
 
 
     @api.depends('group_id')
