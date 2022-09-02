@@ -10,7 +10,7 @@
     'author': "H.Dev",
     'category': 'Inventory',
     'version': '0.1',
-    'depends': ['base', 'stock', 'sale'],
+    'depends': ['base', 'stock', 'sale', 'purchase'],
     'data': [
         # 'security/ir.model.access.csv',
         'views/stock_picking_extended.xml',
